@@ -249,7 +249,7 @@ void auth::changepassword()
                     cin >> newPassword;
                     cout << "Enter your new secretcode :" << endl;
                     cin >> secretcode;
-                    data1 << " " << username << " " << newPassword << " " << newSecretCode << "\n";
+                    data1 << " " << newUsername << " " << newPassword << " " << newSecretCode << "\n";
                     cout << "Account updated sucessfully." << endl;
                 }else{
                     data1 << " " << username << " " << password << " " << secretcode << "\n";
