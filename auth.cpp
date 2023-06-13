@@ -5,11 +5,21 @@
 #include <stdlib.h>
 using namespace std;
 
-void login();
-void registration();
-void forgot();
+class auth
+{
+private :
+    string username;
+    string password;
+    string secretcode;
+public:
+    void menu();
+    void login();
+    void registration();
+    void forgot();
+    void changepassword();
+};
 
-main()
+void auth:: menu()
 {
 
     int choice;
@@ -37,29 +47,32 @@ main()
         cin.get();
         cin.get();
         system("cls");
-        main();
+        menu();
         break;
     }
 }
 
-void registration()
+void auth::registration()
 {
 
-    string regusername, regpassword;
+    string regusername, regpassword, secretcode;
     system("cls");
     cout << "*********** Registration ***********" << endl;
     cout << "Enter username :";
     cin >> regusername;
     cout << "Enter password :";
     cin >> regpassword;
+    cout << "Enter secret code :" << endl;
+    cout << "*When you forget to remind your password, you can reset your password with secret code" << endl;
+    cin >> secretcode;
 
     ofstream reg("database.txt", ios::app);
-    reg << regusername << " " << regpassword << endl;
+    reg << regusername << " " << regpassword << " " << secretcode << endl;
     cout << "Registration successfully\n";
-    main();
+    menu();
 }
 
-void login()
+void auth::login()
 {
     int exist;
     string username, password, u, p;
@@ -85,7 +98,7 @@ void login()
         cout << "Hello " << username << "\nWe're glad that you're here\n";
         cin.get();
         cin.get();
-        main();
+        menu();
     }
     else
     {
@@ -94,11 +107,11 @@ void login()
         cout << "Press any key to back to main";
         cin.get();
         cin.get();
-        main();
+        login();
     }
 }
 
-void forgot()
+void auth::forgot()
 {
     int ch;
     system("cls");
@@ -130,17 +143,16 @@ void forgot()
         if (ex == 1)
         {
             cout << "Your account found \n";
-            cout << "Your password is " << sp;
             cin.get();
             cin.get();
-            main();
+            changepassword();
         }
         else
         {
             cout << "Sorry, your account is not found \n";
             cin.get();
             cin.get();
-            main();
+            forgot();
         }
         break;
     }
@@ -168,13 +180,20 @@ void forgot()
             cout << "Your password is " << sp2;
             cin.get();
             cin.get();
-            main();
+            forgot();
+        }
+        else
+        {
+            cout << "Sorry, your account is not found \n";
+            cin.get();
+            cin.get();
+            forgot();
         }
         break;
     }
     case 3:
     {
-        main();
+        menu();
         break;
     }
     default:
@@ -186,4 +205,75 @@ void forgot()
         break;
     }
     }
+}
+
+void auth::changepassword()
+{
+    int ex = 0;
+    string secretcode, sc;
+    cout << "Enter your secret code :" << endl;
+    cin >> secretcode;
+    fstream input("database.txt");
+    while (input >> sc)
+    {
+        if (sc == secretcode)
+        {
+            ex = 1;
+            break;
+        }
+    }
+
+    input.close();
+    if (ex == 1)
+    {
+        fstream data, data1;
+        string newPassword, newUsername, newSecretCode;
+        cout << "Your secretcode found \n";
+        data.open("database.txt", ios::in);
+
+        if (!data)
+        {
+            cout << "Error opening files!";
+        }
+        else
+        {
+            data1.open("database1.txt", ios::app | ios::out);
+            data >> username, password, newSecretCode;
+            while (!data.eof())
+            {
+                if(sc == secretcode)
+                {
+                    cout << "Enter your new username :" << endl;
+                    cin >> username;
+                    cout << "Enter your new password :" << endl;
+                    cin >> newPassword;
+                    cout << "Enter your new secretcode :" << endl;
+                    cin >> secretcode;
+                    data1 << " " << username << " " << newPassword << " " << newSecretCode << "\n";
+                    cout << "Account updated sucessfully." << endl;
+                }else{
+                    data1 << " " << username << " " << password << " " << secretcode << "\n";
+                }
+                data >> username, password, secretcode;
+            }
+            data.close();
+            data1.close();
+
+            remove("database.txt");
+            rename("database1.txt", "database.txt");
+        }
+    }
+    else
+    {
+        cout << "Sorry, your secret code is not found \n";
+        cin.get();
+        cin.get();
+        changepassword();
+    }
+}
+
+int main()
+{
+    auth s;
+    s.menu();
 }
