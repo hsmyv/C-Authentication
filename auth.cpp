@@ -238,23 +238,23 @@ void auth::changepassword()
         else
         {
             data1.open("database1.txt", ios::app | ios::out);
-            data >> username, password, newSecretCode;
+            data >> username, password, secretcode;
             while (!data.eof())
             {
                 if(sc == secretcode)
                 {
                     cout << "Enter your new username :" << endl;
-                    cin >> username;
+                    cin >> newUsername;
                     cout << "Enter your new password :" << endl;
                     cin >> newPassword;
                     cout << "Enter your new secretcode :" << endl;
-                    cin >> secretcode;
+                    cin >> newSecretCode;
                     data1 << " " << newUsername << " " << newPassword << " " << newSecretCode << "\n";
                     cout << "Account updated sucessfully." << endl;
                 }else{
                     data1 << " " << username << " " << password << " " << secretcode << "\n";
                 }
-                data >> username, password, secretcode;
+                data >> username >> password >> secretcode;
             }
             data.close();
             data1.close();
